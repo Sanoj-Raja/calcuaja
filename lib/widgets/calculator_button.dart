@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
 
 class CalculatorButton extends StatelessWidget {
-  // final dynamic buttonPressFunction;
-  final String buttonString;
+  final String buttonText;
+  final Color buttonTextColor;
   const CalculatorButton({
     Key? key,
-    required this.buttonString,
-    // this.buttonPressFunction,
+    required this.buttonText,
+    this.buttonTextColor = Colors.black,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 5,
-      width: MediaQuery.of(context).size.height / 5,
-      child: Center(
-        child: Text(
-          buttonString,
-          style: const TextStyle(
-            fontSize: 60,
-          ),
+    return Center(
+      child: Text(
+        buttonText,
+        style: TextStyle(
+          fontSize: 32,
+          color: buttonTextColor,
         ),
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.orange,
       ),
     );
   }

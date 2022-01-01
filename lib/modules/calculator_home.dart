@@ -1,4 +1,5 @@
-import 'package:calcuaja/widgets/calculator_button.dart';
+import 'package:calcuaja/widgets/calculator_buttons_row.dart';
+import 'package:calcuaja/widgets/gap_widget.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorHome extends StatefulWidget {
@@ -17,41 +18,78 @@ class _CalculatorHomeState extends State<CalculatorHome> {
           children: [
             const Expanded(
               child: Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(10.0),
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Text(
                     '7494.333',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 25,
+                      fontSize: 50,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: Colors.green,
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
               ),
-              child: Column(
-                children: [
-                  Row(
-                    children: const [
-                      CalculatorButton(
-                        buttonString: '1',
-                      ),
-                      CalculatorButton(
-                        buttonString: '2',
-                      ),
-                      // CalculatorButton(
-                      //   buttonString: '3',
-                      // ),
-                    ],
-                  )
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: const [
+                    VerticalGap(
+                      gap: 15,
+                    ),
+                    CalculatorButtonsRow(
+                      firstRowText: 'C',
+                      secondRowText: '%',
+                      thirdRowText: '«',
+                      finalRowText: '÷',
+                    ),
+                    VerticalGap(
+                      gap: 30,
+                    ),
+                    CalculatorButtonsRow(
+                      firstRowText: '7',
+                      secondRowText: '8',
+                      thirdRowText: '9',
+                      finalRowText: '×',
+                    ),
+                    VerticalGap(
+                      gap: 30,
+                    ),
+                    CalculatorButtonsRow(
+                      firstRowText: '4',
+                      secondRowText: '5',
+                      thirdRowText: '6',
+                      finalRowText: '-',
+                    ),
+                    VerticalGap(
+                      gap: 30,
+                    ),
+                    CalculatorButtonsRow(
+                      firstRowText: '1',
+                      secondRowText: '2',
+                      thirdRowText: '3',
+                      finalRowText: '+',
+                    ),
+                    VerticalGap(
+                      gap: 30,
+                    ),
+                    CalculatorButtonsRow(
+                      firstRowText: '0',
+                      secondRowText: '00',
+                      thirdRowText: '.',
+                      finalRowText: '=',
+                    ),
+                    VerticalGap(
+                      gap: 25,
+                    ),
+                  ],
+                ),
               ),
             )
           ],
