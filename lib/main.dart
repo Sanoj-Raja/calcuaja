@@ -1,5 +1,5 @@
+import 'package:calcuaja/screens/calculator_home.dart';
 import 'package:flutter/material.dart';
-import 'modules/calculator_home.dart';
 
 void main() {
   runApp(const Calcuaja());
