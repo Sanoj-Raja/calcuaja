@@ -1,3 +1,7 @@
+import 'package:calcuaja/constants/strings.dart';
+import 'package:calcuaja/widgets/calculator_buttons_row.dart';
+import 'package:calcuaja/widgets/gap.dart';
+import 'package:calcuaja/widgets/inherited_calculator.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorHome extends StatefulWidget {
@@ -8,23 +12,52 @@ class CalculatorHome extends StatefulWidget {
 }
 
 class _CalculatorHomeState extends State<CalculatorHome> {
-  String clickedTexts = '7383.90';
+  String clickedTexts = '';
 
-  void addClickedText(String textToAdd) {
-    // TODO Yourself correct adding for example if I press all caluclation
-    // keys 6-÷+ it shows all but in real life this is not possible.
-    // So if we have already a caluclation keys then it should be 
-    // replaced by new one. Exapmle we have 6- if we press ÷ then
-    // it will become 6÷ not 6-÷.
-    // Add this thing by yourself.
+  void onCalculatorButtonPressed(String buttonText) {
+    switch (buttonText) {
+      case kClear:
+        _clearClickedTexts();
+        break;
+      case kRemove:
+        _removeText();
+        break;
+      case kEqual:
+        _calculate();
+        break;
+
+      default:
+        _addClickedText(buttonText);
+    }
+  }
+
+  void _addClickedText(String textToAdd) {
     setState(
       () {
-        clickedTexts += textToAdd;
+        if (clickedTexts.isNotEmpty) {
+          String lastText = clickedTexts.split('').last;
+          if ((lastText == kPlus ||
+                  lastText == kMinus ||
+                  lastText == kMultiply ||
+                  lastText == kDivide) &&
+              (textToAdd == kPlus ||
+                  textToAdd == kMinus ||
+                  textToAdd == kMultiply ||
+                  textToAdd == kDivide)) _removeText();
+          clickedTexts += textToAdd;
+        } else {
+          if (!(textToAdd == kPlus ||
+              textToAdd == kMinus ||
+              textToAdd == kMultiply ||
+              textToAdd == kDivide)) {
+            clickedTexts = textToAdd;
+          }
+        }
       },
     );
   }
 
-  void clearClickedTexts() {
+  void _clearClickedTexts() {
     setState(
       () {
         clickedTexts = '';
@@ -32,7 +65,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
     );
   }
 
-  void deleteClickedTexts() {
+  void _removeText() {
     setState(
       () {
         clickedTexts = clickedTexts.substring(0, clickedTexts.length - 1);
@@ -40,356 +73,96 @@ class _CalculatorHomeState extends State<CalculatorHome> {
     );
   }
 
-  void calculate() {
+  void _calculate() {
     setState(
       () {
-        // evalutate on prress.
         clickedTexts = 'Finding..';
-        // TODO Yourself.
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  clickedTexts,
-                  style: const TextStyle(fontSize: 48),
-                ),
+    return InheritedCalculator(
+      onCalculatorButtonPressed: onCalculatorButtonPressed,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.blue.shade50,
+            title: const Text(
+              kAppTitle,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 28,
               ),
             ),
           ),
-          Container(
-            color: Colors.blue.shade50,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
+          body: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  reverse: true,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          clickedTexts,
+                          style: const TextStyle(fontSize: 50),
+                        ),
+                      ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: clearClickedTexts,
-                              child: const Text(
-                                'C',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Expanded(
-                          child: Center(
-                            child: Text(
-                              '%',
-                              style: TextStyle(
-                                fontSize: 35,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: deleteClickedTexts,
-                              child: const Text(
-                                '«',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('÷'),
-                              child: Text(
-                                '÷',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                  color: Colors.teal.shade300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('7'),
-                              child: const Text(
-                                '7',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('8'),
-                              child: const Text(
-                                '8',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('9'),
-                              child: const Text(
-                                '9',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('×'),
-                              child: Text(
-                                '×',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                  color: Colors.teal.shade300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('4'),
-                              child: const Text(
-                                '4',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('5'),
-                              child: const Text(
-                                '5',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('6'),
-                              child: const Text(
-                                '6',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('-'),
-                              child: Text(
-                                '-',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                  color: Colors.teal.shade300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('1'),
-                              child: const Text(
-                                '1',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('2'),
-                              child: const Text(
-                                '2',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('3'),
-                              child: const Text(
-                                '3',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('+'),
-                              child: Text(
-                                '+',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                  color: Colors.teal.shade300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('0'),
-                              child: const Text(
-                                '0',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('00'),
-                              child: const Text(
-                                '00',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: () => addClickedText('.'),
-                              child: const Text(
-                                '.',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: InkWell(
-                              onTap: calculate,
-                              child: Text(
-                                '=',
-                                style: TextStyle(
-                                  fontSize: 35,
-                                  color: Colors.teal.shade300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+              const VerticalGap(),
+              Container(
+                color: Colors.blue.shade50,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: const [
+                      CalculatorButtonsRow(
+                        firstButtonText: kClear,
+                        secondButtonText: kPercent,
+                        thirdButtonText: kRemove,
+                        forthButtonText: kDivide,
+                      ),
+                      CalculatorButtonsRow(
+                        firstButtonText: kSeven,
+                        secondButtonText: kEight,
+                        thirdButtonText: kNine,
+                        forthButtonText: kMultiply,
+                      ),
+                      CalculatorButtonsRow(
+                        firstButtonText: kFour,
+                        secondButtonText: kFive,
+                        thirdButtonText: kSix,
+                        forthButtonText: kMinus,
+                      ),
+                      CalculatorButtonsRow(
+                        firstButtonText: kOne,
+                        secondButtonText: kTwo,
+                        thirdButtonText: kThree,
+                        forthButtonText: kPlus,
+                      ),
+                      CalculatorButtonsRow(
+                        firstButtonText: kZero,
+                        secondButtonText: kDoubleZero,
+                        thirdButtonText: kDot,
+                        forthButtonText: kEqual,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
