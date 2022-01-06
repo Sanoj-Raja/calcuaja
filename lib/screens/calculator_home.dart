@@ -169,7 +169,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                         Expanded(
                           child: Center(
                             child: InkWell(
-                              onTap: () => addClickedText('7'),
+                              onTap: () => addClickedText('9'),
                               child: const Text(
                                 '9',
                                 style: TextStyle(
