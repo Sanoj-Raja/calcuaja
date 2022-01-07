@@ -3,6 +3,7 @@ import 'package:calcuaja/widgets/calculator_buttons_row.dart';
 import 'package:calcuaja/widgets/gap.dart';
 import 'package:calcuaja/widgets/inherited_calculator.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 class CalculatorHome extends StatefulWidget {
   const CalculatorHome({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class CalculatorHome extends StatefulWidget {
 }
 
 class _CalculatorHomeState extends State<CalculatorHome> {
-  String clickedTexts = '';
+  String _clickedTexts = '';
 
   void onCalculatorButtonPressed(String buttonText) {
     switch (buttonText) {
@@ -34,23 +35,32 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   void _addClickedText(String textToAdd) {
     setState(
       () {
-        if (clickedTexts.isNotEmpty) {
-          String lastText = clickedTexts.split('').last;
+        if (_clickedTexts.isNotEmpty) {
+          final String lastText = _clickedTexts.split('').last;
           if ((lastText == kPlus ||
                   lastText == kMinus ||
                   lastText == kMultiply ||
-                  lastText == kDivide) &&
+                  lastText == kDivide ||
+                  lastText == kPercent) &&
               (textToAdd == kPlus ||
                   textToAdd == kMinus ||
                   textToAdd == kMultiply ||
-                  textToAdd == kDivide)) _removeText();
-          clickedTexts += textToAdd;
+                  textToAdd == kDivide ||
+                  textToAdd == kPercent)) _removeText();
+          _clickedTexts += textToAdd;
+        } else if (_clickedTexts.isEmpty &&
+            (textToAdd == kPlus ||
+                textToAdd == kMinus ||
+                textToAdd == kMultiply ||
+                textToAdd == kDivide ||
+                textToAdd == kPercent)) {
+          _clickedTexts;
         } else {
           if (!(textToAdd == kPlus ||
               textToAdd == kMinus ||
               textToAdd == kMultiply ||
               textToAdd == kDivide)) {
-            clickedTexts = textToAdd;
+            _clickedTexts = textToAdd;
           }
         }
       },
@@ -60,7 +70,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   void _clearClickedTexts() {
     setState(
       () {
-        clickedTexts = '';
+        _clickedTexts = '';
       },
     );
   }
@@ -68,17 +78,55 @@ class _CalculatorHomeState extends State<CalculatorHome> {
   void _removeText() {
     setState(
       () {
-        clickedTexts = clickedTexts.substring(0, clickedTexts.length - 1);
+        if (_clickedTexts.isNotEmpty) {
+          _clickedTexts = _clickedTexts.substring(0, _clickedTexts.length - 1);
+        }
       },
     );
   }
 
   void _calculate() {
-    setState(
-      () {
-        clickedTexts = 'Finding..';
-      },
-    );
+    if (_clickedTexts.isNotEmpty && !(_clickedTexts == kErrorExpression)) {
+      final String lastText = _clickedTexts.split('').last;
+      if (lastText == kPlus ||
+          lastText == kMinus ||
+          lastText == kMultiply ||
+          lastText == kDivide ||
+          lastText == kPercent) {
+        return;
+      }
+      setState(
+        () {
+          Parser parser = Parser();
+          Expression exp;
+          String resultUptoTwoDecimalPoints;
+          try {
+            exp = parser.parse(
+              _clickedTexts.replaceAll(kMultiply, '*').replaceAll(kDivide, '/'),
+            );
+            ContextModel cm = ContextModel();
+            resultUptoTwoDecimalPoints = exp
+                .evaluate(EvaluationType.REAL, cm)
+                .toStringAsFixed(2)
+                .toString();
+          } catch (e) {
+            _clickedTexts = kErrorExpression;
+            return;
+          }
+
+          List<String> decimalDigits =
+              resultUptoTwoDecimalPoints.split('.').last.split('');
+          if (decimalDigits.first == kZero && decimalDigits.last == kZero) {
+            _clickedTexts = resultUptoTwoDecimalPoints.split('.').first;
+          } else if (decimalDigits.first != kZero &&
+              decimalDigits.last == kZero) {
+            _clickedTexts = resultUptoTwoDecimalPoints.substring(0, 3);
+          } else {
+            _clickedTexts = resultUptoTwoDecimalPoints;
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -111,7 +159,7 @@ class _CalculatorHomeState extends State<CalculatorHome> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          clickedTexts,
+                          _clickedTexts,
                           style: const TextStyle(fontSize: 50),
                         ),
                       ),

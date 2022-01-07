@@ -19,3 +19,4 @@ const String kMinus = '-';
 const String kMultiply = '×';
 const String kDivide = '÷';
 const String kEqual = '=';
+const String kErrorExpression = 'Wrong Input!';
